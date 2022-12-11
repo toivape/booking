@@ -1,0 +1,6 @@
+### Get active co-operatives
+GET http://localhost:8080/api/classtypes
+
+### Get active co-operatives
+GET http://localhost:8080/api/classdefinitions
+
