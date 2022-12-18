@@ -10,8 +10,11 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
+/**
+ * Test only web layer.
+ */
 @WebMvcTest
-class ClassApiTest(@Autowired val mockMvc: MockMvc) {
+class ClassApiTestWebOnly(@Autowired val mockMvc: MockMvc) {
 
     @MockkBean
     private lateinit var service: ClassService

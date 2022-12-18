@@ -34,8 +34,8 @@ CREATE TABLE class_definition(
 );
 
 INSERT INTO class_definition (version, name, location, class_type_code, price_credits, max_people, description ,recurrence_days , recurrence_start_date, recurrence_end_date, start_time, end_time, created_at, updated_at) values
-                            (1, 'Astanga mysore', 'Annankatu 29 B Sisäpiha / Courtyard, 00100 Helsinki, Suomi', 'MYSORE', 10, 16, 'Mysoreharjoittelu on perinteinen tapa harjoitella astangajoogaa.', ['MA', 'KE'],
-                             '2023-01-01', '2023-05-31', '08:00', '09:15', NOW(), NOW())
+    (1, 'Astanga mysore', 'Annankatu 29 B Sisäpiha / Courtyard, 00100 Helsinki, Suomi', 'MYSORE', 10, 16, 'Mysoreharjoittelu on perinteinen tapa harjoitella astangajoogaa.', ARRAY['MA', 'KE'],
+     '2023-01-01', '2023-05-31', '08:00', '09:15', NOW(), NOW())
 
 -- Teacher can have many classes, class can have many teachers
 CREATE TABLE class_definition_teacher(
