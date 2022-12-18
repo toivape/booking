@@ -17,5 +17,5 @@ class ClassDefinitionListItem(
 interface ClassDefinitionRepository : CrudRepository<ClassDefinition, Int> {
     fun findByOrderByNameAsc(): List<ClassDefinition>
 
-    fun listClassDefinitions(): List<ClassDefinitionListItem>
+    // fun listClassDefinitions(): List<ClassDefinitionListItem>
 }
