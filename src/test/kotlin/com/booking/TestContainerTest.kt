@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
-
 @Testcontainers
 class TestContainerTest {
 

@@ -1,8 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
     id("org.springframework.boot") version "3.0.0"
     id("io.spring.dependency-management") version "1.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     // id("org.graalvm.buildtools.native") version "0.9.18"
     kotlin("jvm") version "1.7.21"
     kotlin("plugin.spring") version "1.7.21"
@@ -58,4 +60,16 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+ktlint {
+    verbose.set(true)
+    outputToConsole.set(true)
+    coloredOutput.set(true)
+    reporters {
+        reporter(ReporterType.PLAIN)
+    }
+    filter {
+        exclude("**/style-violations.kt")
+    }
 }
