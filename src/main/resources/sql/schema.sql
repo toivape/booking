@@ -2,7 +2,7 @@ create table class_type
 (
     code varchar(30) not null
         primary key,
-    name varchar(300)
+    name varchar(300) not null
 );
 
 create table class_definition
@@ -18,7 +18,7 @@ create table class_definition
     price_credits         integer,
     max_people            integer,
     description           varchar(3000),
-    recurrence_days       varchar(2)[],
+    recurrence_days       varchar(3)[],
     recurrence_start_date date,
     recurrence_end_date   date,
     start_time            time,

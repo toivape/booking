@@ -54,7 +54,7 @@ class ClassApiIntegrationTestImproved(@Autowired val mockMvc: MockMvc, @Autowire
     )
     @Test
     fun `Find class definitions`() {
-        mockMvc.get("/api/classdefinitions")
+        mockMvc.get("/api/classes/definitions")
             .andExpect { status { isOk() } }
             .andExpect {
                 jsonPath("\$.[0].id") { value(1) }

@@ -28,7 +28,7 @@ class PostgreExtension : BeforeAllCallback, AfterAllCallback {
 
     override fun beforeAll(context: ExtensionContext?) {
         container.start()
-        logger.info { "🫡Test container started at URL ${container.jdbcUrl}" }
+        logger.info { "🫡PostgreSQL test container started at URL ${container.jdbcUrl}" }
         System.setProperty("spring.datasource.url", container.jdbcUrl)
         System.setProperty("spring.datasource.username", container.username)
         System.setProperty("spring.datasource.password", container.password)

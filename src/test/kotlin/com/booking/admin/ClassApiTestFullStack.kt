@@ -26,10 +26,57 @@ class ClassApiTestFullStack(@Autowired val webClient: WebTestClient) {
     )
     @Test
     fun `Find class types`() {
-        webClient.get().uri("/api/classtypes")
+        webClient.get().uri("/api/classes/types")
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("\$.[0].code").isEqualTo("A1")
+    }
+
+    @Sql(statements = ["INSERT INTO class_type (code, name) VALUES ('MATTI','Matti')"])
+    @Test
+    fun `Find class type by Id`() {
+        webClient.get().uri("/api/classes/types/MATTI")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("\$.code").isEqualTo("MATTI")
+    }
+
+    @Test
+    fun `Class type is not found`() {
+        webClient.get().uri("/api/classes/types/TEPPO")
+            .exchange()
+            .expectStatus().isNotFound
+            .expectBody()
+            .jsonPath("\$.error").isEqualTo("Not Found")
+    }
+
+    @Test
+    fun `Add class type`() {
+        val newClassType = ClassType("code-7", "Koodi-7")
+        webClient.post().uri("/api/classes/types")
+            .bodyValue(newClassType)
+            .exchange()
+            .expectStatus().isCreated
+            .expectBody()
+            .jsonPath("\$.code").isEqualTo(newClassType.code)
+            .jsonPath("\$.name").isEqualTo(newClassType.name)
+    }
+
+    @Test
+    fun `Add class type without code`() {
+        webClient.post().uri("/api/classes/types")
+            .bodyValue(ClassType("code-7", ""))
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Sql(statements = ["INSERT INTO class_type (code, name) VALUES ('DELETE','Delete me')"])
+    @Test
+    fun `Delete class type`() {
+        webClient.delete().uri("/api/classes/types/DELETE")
+            .exchange()
+            .expectStatus().isOk
     }
 }

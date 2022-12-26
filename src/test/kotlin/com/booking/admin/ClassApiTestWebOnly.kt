@@ -21,9 +21,9 @@ class ClassApiTestWebOnly(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `Find class types`() {
-        every { service.getClassTypes() } returns listOf(ClassType("A1","Aloittelijat 1"), ClassType("A2","Aloittelijat 2"))
+        every { service.listClassTypes() } returns listOf(ClassType("A1","Aloittelijat 1"), ClassType("A2","Aloittelijat 2"))
 
-        mockMvc.get("/api/classtypes")
+        mockMvc.get("/api/classes/types")
             .andExpect { status { isOk() } }
             .andExpect { content { contentType(MediaType.APPLICATION_JSON) } }
             .andExpect {
@@ -33,6 +33,6 @@ class ClassApiTestWebOnly(@Autowired val mockMvc: MockMvc) {
                 jsonPath("\$.[1].name") { value("Aloittelijat 2") }
             }
 
-        verify(exactly = 1) { service.getClassTypes() }
+        verify(exactly = 1) { service.listClassTypes() }
     }
 }

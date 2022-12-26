@@ -1,6 +1,14 @@
 package com.booking.admin
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
+import jakarta.persistence.Version
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -43,7 +51,7 @@ class ClassDefinition(
     @Column(name = "description", length = 3000)
     val description: String?,
 
-    @Column(name = "recurrence_days", columnDefinition = "text[]")
+    @Column(name = "recurrence_days", columnDefinition = "varchar(3)[]")
     val recurrenceDays: Array<String>?,
 
     @Column(name = "recurrence_start_date", columnDefinition = "DATE")
