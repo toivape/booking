@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest
 import mu.KotlinLogging
 import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.http.HttpStatus
+import org.springframework.validation.FieldError
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -14,11 +16,31 @@ data class ExceptionResult(val errorMessage: String, val url: String)
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
-    // Reason is shown in message field of the response provided application property is set: server.error.include-message=always
+    /**
+     * Convert ORM DataRetrievalFailureException to HTTP-404.
+     *
+     * Note: Reason is shown in message field of the response provided application property is set: server.error.include-message=always
+     */
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Requested data not found with id")
     @ExceptionHandler(DataRetrievalFailureException::class)
     fun handleDataNotFound(request: HttpServletRequest, ex: Exception?): ExceptionResult {
         logger.warn("Request failed [${request.requestURL}]: ${ex?.message}")
         return ExceptionResult(errorMessage = "Requested data does not exist", url = request.requestURI)
+    }
+
+    /**
+     * Return validation errors as json.
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(
+        MethodArgumentNotValidException::class
+    )
+    fun handleValidationExceptions(
+        ex: MethodArgumentNotValidException
+    ): Map<String, String?>? {
+        return ex.bindingResult.allErrors.associate {
+            val fieldName = (it as FieldError).field
+            fieldName to it.defaultMessage
+        }
     }
 }

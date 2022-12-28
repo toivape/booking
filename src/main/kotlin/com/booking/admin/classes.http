@@ -10,12 +10,21 @@ Content-Type: application/json
   "name": "Koodi 6"
 }
 
-### Add invalid class type
+### Adding class type without name return error
 POST http://localhost:8080/api/classes/types
 Content-Type: application/json
 
 {
   "code": "KOODI6",
+  "name": ""
+}
+
+### Adding class type with too long code return error
+POST http://localhost:8080/api/classes/types
+Content-Type: application/json
+
+{
+  "code": "123456789012345678901234567890X",
   "name": ""
 }
 

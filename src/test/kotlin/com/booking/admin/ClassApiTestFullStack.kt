@@ -64,19 +64,23 @@ class ClassApiTestFullStack(@Autowired val webClient: WebTestClient) {
             .jsonPath("\$.name").isEqualTo(newClassType.name)
     }
 
-    @Test
-    fun `Add class type without code`() {
-        webClient.post().uri("/api/classes/types")
-            .bodyValue(ClassType("code-7", ""))
-            .exchange()
-            .expectStatus().isBadRequest
-    }
-
     @Sql(statements = ["INSERT INTO class_type (code, name) VALUES ('DELETE','Delete me')"])
     @Test
     fun `Delete class type`() {
         webClient.delete().uri("/api/classes/types/DELETE")
             .exchange()
             .expectStatus().isOk
+    }
+
+    @Test
+    fun `Saving invalid class type return errors`() {
+        val badClassType = ClassType("123456789012345678901234567890X", "")
+        webClient.post().uri("/api/classes/types")
+            .bodyValue(badClassType)
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody()
+            .jsonPath("\$.code").isEqualTo("size must be between 1 and 30")
+            .jsonPath("\$.name").isEqualTo("must not be empty")
     }
 }

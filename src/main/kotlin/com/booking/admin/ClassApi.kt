@@ -2,14 +2,10 @@ package com.booking.admin
 
 import jakarta.persistence.*
 import jakarta.validation.Valid
-import jakarta.validation.constraints.NotBlank
-import org.springframework.dao.EmptyResultDataAccessException
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Size
 import org.springframework.http.HttpStatus
-import org.springframework.validation.FieldError
-import org.springframework.validation.ObjectError
-import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
-import java.util.function.Consumer
 
 @RestController
 @RequestMapping("/api/classes")
@@ -35,30 +31,16 @@ class ClassApi(val classService: ClassService) {
     fun listClassDefinitions() = classService.listClassDefinitions()
 }
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-@ExceptionHandler(EmptyResultDataAccessException::class)
-fun handleValidationExceptions(
-    ex: MethodArgumentNotValidException
-): Map<String, String?>? {
-    val errors: MutableMap<String, String?> = HashMap()
-    ex.bindingResult.allErrors.forEach(
-        Consumer { error: ObjectError ->
-            val fieldName = (error as FieldError).field
-            val errorMessage = error.getDefaultMessage()
-            errors[fieldName] = errorMessage
-        }
-    )
-    return errors
-}
-
 data class ClassTypeForm(
 
     // not empty max len 30
-    @field:NotBlank
+    @field:NotEmpty
+    @field:Size(min = 1, max = 30)
     val code: String,
 
     // not empty max len 300
-    @field:NotBlank
+    @field:NotEmpty
+    @field:Size(min = 1, max = 300)
     val name: String
 )
 
