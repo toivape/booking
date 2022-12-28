@@ -25,7 +25,7 @@ class ClassApiTestFullStack(@Autowired val webClient: WebTestClient) {
         ]
     )
     @Test
-    fun `Find class types`() {
+    fun `List all class types`() {
         webClient.get().uri("/api/classes/types")
             .exchange()
             .expectStatus().isOk
@@ -35,12 +35,21 @@ class ClassApiTestFullStack(@Autowired val webClient: WebTestClient) {
 
     @Sql(statements = ["INSERT INTO class_type (code, name) VALUES ('MATTI','Matti')"])
     @Test
-    fun `Find class type by Id`() {
+    fun `Get class type by Id`() {
         webClient.get().uri("/api/classes/types/MATTI")
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("\$.code").isEqualTo("MATTI")
+    }
+
+    @Test
+    fun `Getting class type using invalid code format returns error`() {
+        webClient.get().uri("/api/classes/types/MATTI!")
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody()
+            .jsonPath("\$[0]").isEqualTo("getClassType.code - must match \"${ClassTypeForm.CODE_PATTERN}\"")
     }
 
     @Test
@@ -54,33 +63,64 @@ class ClassApiTestFullStack(@Autowired val webClient: WebTestClient) {
 
     @Test
     fun `Add class type`() {
-        val newClassType = ClassType("code-7", "Koodi-7")
+        val body = ClassTypeForm("CODE_7", "Koodi 7")
         webClient.post().uri("/api/classes/types")
-            .bodyValue(newClassType)
+            .bodyValue(body)
             .exchange()
             .expectStatus().isCreated
             .expectBody()
-            .jsonPath("\$.code").isEqualTo(newClassType.code)
-            .jsonPath("\$.name").isEqualTo(newClassType.name)
+            .jsonPath("\$.code").isEqualTo(body.code)
+            .jsonPath("\$.name").isEqualTo(body.name)
     }
 
-    @Sql(statements = ["INSERT INTO class_type (code, name) VALUES ('DELETE','Delete me')"])
+    @Sql(statements = ["INSERT INTO class_type (code, name) VALUES ('DELETE_ME','Delete me')"])
     @Test
     fun `Delete class type`() {
-        webClient.delete().uri("/api/classes/types/DELETE")
+        webClient.delete().uri("/api/classes/types/DELETE_ME")
             .exchange()
             .expectStatus().isOk
     }
 
     @Test
-    fun `Saving invalid class type return errors`() {
-        val badClassType = ClassType("123456789012345678901234567890X", "")
+    fun `Delete class type with invalid code format returns error`() {
+        webClient.delete().uri("/api/classes/types/DELETE_ME!")
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody()
+            .jsonPath("\$[0]").isEqualTo("deleteClassType.code - must match \"${ClassTypeForm.CODE_PATTERN}\"")
+    }
+
+    @Test
+    fun `Saving invalid class type returns errors`() {
+        val body = ClassTypeForm("123456789012345678901234567890X", "  ")
         webClient.post().uri("/api/classes/types")
-            .bodyValue(badClassType)
+            .bodyValue(body)
             .exchange()
             .expectStatus().isBadRequest
             .expectBody()
             .jsonPath("\$.code").isEqualTo("size must be between 1 and 30")
-            .jsonPath("\$.name").isEqualTo("must not be empty")
+            .jsonPath("\$.name").isEqualTo("must not be blank")
+    }
+
+    @Test
+    fun `Adding class type with invalid code returns error`() {
+        val body = ClassTypeForm("BAD_12!", "Valid name")
+        webClient.post().uri("/api/classes/types")
+            .bodyValue(body)
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody()
+            .jsonPath("\$.code").isEqualTo("must match \"${ClassTypeForm.CODE_PATTERN}\"")
+    }
+
+    @Test
+    fun `Class code does not allow spaces`() {
+        val body = ClassTypeForm("BAD 12", "Valid name")
+        webClient.post().uri("/api/classes/types")
+            .bodyValue(body)
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody()
+            .jsonPath("\$.code").isEqualTo("must match \"${ClassTypeForm.CODE_PATTERN}\"")
     }
 }

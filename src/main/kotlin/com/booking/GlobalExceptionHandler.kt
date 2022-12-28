@@ -1,6 +1,7 @@
 package com.booking
 
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.ConstraintViolationException
 import mu.KotlinLogging
 import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.http.HttpStatus
@@ -29,18 +30,37 @@ class GlobalExceptionHandler {
     }
 
     /**
-     * Return validation errors as json.
+     * Return RequestBody validation errors as json.
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(
         MethodArgumentNotValidException::class
     )
-    fun handleValidationExceptions(
+    fun handleRequestBodyExceptions(
         ex: MethodArgumentNotValidException
     ): Map<String, String?>? {
+        // FIXME: If field has multiple errors, only the last one will be shown
+        logger.warn("Validation failed failed: ${ex.message}")
         return ex.bindingResult.allErrors.associate {
             val fieldName = (it as FieldError).field
             fieldName to it.defaultMessage
         }
     }
+
+    /**
+     * Return PathVariable validation errors as json.
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(
+        ConstraintViolationException::class
+    )
+    fun handlePathVariableExceptions(
+        ex: ConstraintViolationException
+    ): List<String>? {
+        logger.warn("PathVariable validation failed failed: ${ex.message} - violations: ${ex.constraintViolations}")
+        return ex.constraintViolations.map {
+            "${it.propertyPath} - ${it.message}"
+        }
+    }
+
 }

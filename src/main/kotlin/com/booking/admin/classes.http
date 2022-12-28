@@ -1,4 +1,4 @@
-### Get class type
+### Get all class types
 GET http://localhost:8080/api/classes/types
 
 ### Add class type
@@ -6,33 +6,66 @@ POST http://localhost:8080/api/classes/types
 Content-Type: application/json
 
 {
-  "code": "KOODI6",
+  "code": "KOODI_6",
   "name": "Koodi 6"
 }
 
-### Adding class type without name return error
+
+### Adding class type with invalid return error
+POST http://localhost:8080/api/classes/types
+Content-Type: application/json
+
+{
+  "code": "KOODI_6! 123456789012345678901234567890X",
+  "name": "Koodi 6"
+}
+
+
+### Adding class type without name returns error
 POST http://localhost:8080/api/classes/types
 Content-Type: application/json
 
 {
   "code": "KOODI6",
-  "name": ""
+  "name": " "
 }
 
-### Adding class type with too long code return error
+### Adding class type with too long code returns error
 POST http://localhost:8080/api/classes/types
 Content-Type: application/json
 
 {
   "code": "123456789012345678901234567890X",
-  "name": ""
+  "name": "Valid name"
 }
 
-### Get class type
-GET http://localhost:8080/api/classes/types/KOODI6
+### Adding class type with blank code return error
+POST http://localhost:8080/api/classes/types
+Content-Type: application/json
+
+{
+  "code": " ",
+  "name": "Valid name"
+}
+
+### Get class type by code
+GET http://localhost:8080/api/classes/types/KOODI_6
+
+### Get class type with invalid code format fails
+GET http://localhost:8080/api/classes/types/KOODI_6!
+
+### Get class type with too long code returns error
+GET http://localhost:8080/api/classes/types/123456789012345678901234567890KOODI6
 
 ### Delete class type
 DELETE http://localhost:8080/api/classes/types/KOODI6
+
+### Delete class type with invalid code format fails
+DELETE http://localhost:8080/api/classes/types/KOODI_6!
+
+### Delete class type with too long code returns error
+DELETE http://localhost:8080/api/classes/types/123456789012345678901234567890KOODI6
+
 
 ### Get class definitions
 GET http://localhost:8080/api/classes/definitions
