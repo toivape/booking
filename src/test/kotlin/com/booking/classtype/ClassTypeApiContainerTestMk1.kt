@@ -1,4 +1,4 @@
-package com.booking.admin
+package com.booking.classtype
 
 import com.booking.postgres
 import org.junit.jupiter.api.Test
@@ -42,7 +42,7 @@ class ClassTypeApiContainerTestMk1(@Autowired val mockMvc: MockMvc) {
     )
     @Test
     fun `Find class types`() {
-        mockMvc.get("/api/classes/types")
+        mockMvc.get("/api/classtypes")
             .andExpect { status { isOk() } }
             .andExpect {
                 jsonPath("\$.[0].code") { value("A1") }

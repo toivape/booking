@@ -1,5 +1,6 @@
-package com.booking.admin
+package com.booking.classdef
 
+import com.booking.classtype.ClassType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -11,16 +12,6 @@ import jakarta.persistence.Table
 import jakarta.persistence.Version
 import java.time.LocalDate
 import java.time.LocalDateTime
-
-@Entity
-@Table(name = "class_type")
-class ClassType(
-    @Id
-    val code: String,
-
-    @Column(name = "name")
-    val name: String
-)
 
 @Entity
 @Table(name = "class_definition")

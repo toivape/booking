@@ -1,6 +1,6 @@
-package com.booking.admin
+package com.booking.classtype
 
-import com.booking.admin.ClassTypeForm.Companion.CODE_PATTERN
+import com.booking.classtype.ClassTypeForm.Companion.CODE_PATTERN
 import jakarta.persistence.*
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -14,30 +14,30 @@ import org.springframework.web.bind.annotation.*
 private val logger = KotlinLogging.logger {}
 
 @RestController
-@RequestMapping("/api/classes")
+@RequestMapping("/api/classtypes")
 @Validated // Required to validate path variables
-class ClassApi(val classService: ClassService) {
+class ClassApi(val classTypeService: ClassTypeService) {
 
-    @GetMapping("/types")
-    fun listClassTypes() = classService.listClassTypes()
+    @GetMapping
+    fun listClassTypes() = classTypeService.listClassTypes()
 
-    @PostMapping("/types")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun addClassType(
         @Valid // Is required to validate RequestBody even if class level has @Validated
         @RequestBody
         form: ClassTypeForm
-    ) = classService.saveClassType(form.code, form.name)
+    ) = classTypeService.saveClassType(form.code, form.name)
 
-    @DeleteMapping("/types/{code}")
+    @DeleteMapping("{code}")
     fun deleteClassType(
         @PathVariable
         @Size(max = 30)
         @Pattern(regexp = CODE_PATTERN)
         code: String
-    ) = classService.deleteClassType(code)
+    ) = classTypeService.deleteClassType(code)
 
-    @GetMapping("/types/{code}")
+    @GetMapping("{code}")
     fun getClassType(
         @PathVariable
         @Size(max = 30)
@@ -45,7 +45,7 @@ class ClassApi(val classService: ClassService) {
         code: String
     ): ClassType {
         logger.info { "Get class type with code $code or throw not found" }
-        return classService.getClassType(code)
+        return classTypeService.getClassType(code)
     }
 }
 

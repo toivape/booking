@@ -1,4 +1,4 @@
-package com.booking.admin
+package com.booking.classdef
 
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.shouldBe

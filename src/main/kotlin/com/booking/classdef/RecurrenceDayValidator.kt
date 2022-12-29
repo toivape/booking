@@ -1,4 +1,4 @@
-package com.booking.admin
+package com.booking.classdef
 
 import jakarta.validation.Constraint
 import jakarta.validation.ConstraintValidator

@@ -1,18 +1,15 @@
-package com.booking.admin
+package com.booking.classdef
 
+import com.booking.classtype.ClassType
 import org.springframework.data.repository.CrudRepository
 
-interface ClassTypeRepo : CrudRepository<ClassType, String> {
-    fun findByOrderByNameAsc(): List<ClassType>
-}
-
-class ClassDefinitionListItem(
+class ClassDefListItem(
     val id: Int,
     val name: String,
     val classType: ClassType
 )
 
-interface ClassDefinitionRepo : CrudRepository<ClassDefinition, Int> {
+interface ClassDefRepo : CrudRepository<ClassDefinition, Int> {
     fun findByOrderByNameAsc(): List<ClassDefinition>
 
     // fun listClassDefinitions(): List<ClassDefinitionListItem>

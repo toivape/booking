@@ -1,0 +1,3 @@
+### List class definitions
+GET http://localhost:8080/api/classdefs
+

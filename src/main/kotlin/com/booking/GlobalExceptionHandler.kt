@@ -15,6 +15,10 @@ private val logger = KotlinLogging.logger {}
 
 data class ExceptionResult(val errorMessage: String, val url: String)
 
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class NotFoundException : RuntimeException("Requested data not found with id")
+
+
 @RestControllerAdvice
 class GlobalExceptionHandler {
     /**

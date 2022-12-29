@@ -1,8 +1,8 @@
 ### Get all class types
-GET http://localhost:8080/api/classes/types
+GET http://localhost:8080/api/classtypes
 
 ### Add class type
-POST http://localhost:8080/api/classes/types
+POST http://localhost:8080/api/classtypes
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 
 
 ### Adding class type with invalid return error
-POST http://localhost:8080/api/classes/types
+POST http://localhost:8080/api/classtypes
 Content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 
 ### Adding class type without name returns error
-POST http://localhost:8080/api/classes/types
+POST http://localhost:8080/api/classtypes
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 
 ### Adding class type with too long code returns error
-POST http://localhost:8080/api/classes/types
+POST http://localhost:8080/api/classtypes
 Content-Type: application/json
 
 {
@@ -40,7 +40,7 @@ Content-Type: application/json
 }
 
 ### Adding class type with blank code return error
-POST http://localhost:8080/api/classes/types
+POST http://localhost:8080/api/classtypes
 Content-Type: application/json
 
 {
@@ -49,24 +49,21 @@ Content-Type: application/json
 }
 
 ### Get class type by code
-GET http://localhost:8080/api/classes/types/KOODI_6
+GET http://localhost:8080/api/classtypes/KOODI_6
 
 ### Get class type with invalid code format fails
-GET http://localhost:8080/api/classes/types/KOODI_6!
+GET http://localhost:8080/api/classtypes/KOODI_6!
 
 ### Get class type with too long code returns error
-GET http://localhost:8080/api/classes/types/123456789012345678901234567890KOODI6
+GET http://localhost:8080/api/classtypes/123456789012345678901234567890KOODI6
 
 ### Delete class type
-DELETE http://localhost:8080/api/classes/types/KOODI6
+DELETE http://localhost:8080/api/classtypes/KOODI6
 
 ### Delete class type with invalid code format fails
-DELETE http://localhost:8080/api/classes/types/KOODI_6!
+DELETE http://localhost:8080/api/classtypes/KOODI_6!
 
 ### Delete class type with too long code returns error
-DELETE http://localhost:8080/api/classes/types/123456789012345678901234567890KOODI6
+DELETE http://localhost:8080/api/classtypes/123456789012345678901234567890KOODI6
 
-
-### Get class definitions
-GET http://localhost:8080/api/classes/definitions
 

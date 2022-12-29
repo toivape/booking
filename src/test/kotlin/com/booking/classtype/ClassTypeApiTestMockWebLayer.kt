@@ -1,4 +1,4 @@
-package com.booking.admin
+package com.booking.classtype
 
 import com.booking.PostgreExtension
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -25,11 +25,10 @@ import org.springframework.test.web.servlet.post
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(PostgreExtension::class)
-class ClassTypeApiTestMockWebLayer(@Autowired val mockMvc: MockMvc, @Autowired val mapper: ObjectMapper, @Autowired val classTypeRepo: ClassTypeRepo, @Autowired val classDefinitionRepo: ClassDefinitionRepo) {
+class ClassTypeApiTestMockWebLayer(@Autowired val mockMvc: MockMvc, @Autowired val mapper: ObjectMapper, @Autowired val classTypeRepo: ClassTypeRepo) {
 
     @AfterEach
     fun cleanAfterEach() {
-        classDefinitionRepo.deleteAll()
         classTypeRepo.deleteAll()
     }
 
@@ -41,7 +40,7 @@ class ClassTypeApiTestMockWebLayer(@Autowired val mockMvc: MockMvc, @Autowired v
     )
     @Test
     fun `Find class types`() {
-        mockMvc.get("/api/classes/types")
+        mockMvc.get("/api/classtypes")
             .andExpect { status { isOk() } }
             .andExpect {
                 jsonPath("\$.[0].code") { value("A1") }
@@ -51,27 +50,11 @@ class ClassTypeApiTestMockWebLayer(@Autowired val mockMvc: MockMvc, @Autowired v
             }
     }
 
-    @Sql(
-        statements = [
-            "INSERT INTO class_type (code, name) values ('MYSORE', 'Mysoreharjoittelu')",
-            "INSERT INTO class_definition (id, version, name, location, class_type_code, price_credits, max_people, description ,recurrence_days , recurrence_start_date, recurrence_end_date, start_time, end_time, created_at, updated_at) VALUES                 (1, 1, 'Astanga mysore', 'Annankatu 29 B Sisäpiha / Courtyard, 00100 Helsinki, Suomi', 'MYSORE', 10, 16, 'Mysoreharjoittelu on perinteinen tapa harjoitella astangajoogaa.', ARRAY['MA', 'KE'], '2023-01-01', '2023-05-31', '08:00', '09:15', NOW(), NOW())"
-        ]
-    )
-    @Test
-    fun `List class definitions`() {
-        mockMvc.get("/api/classes/definitions")
-            .andExpect { status { isOk() } }
-            .andExpect {
-                jsonPath("\$.[0].id") { value(1) }
-                jsonPath("\$.[0].name") { value("Astanga mysore") }
-            }
-    }
-
     @Test
     fun `New class type is added to DB`() {
         val form = ClassTypeForm("NEW", "New type")
 
-        mockMvc.post("/api/classes/types") {
+        mockMvc.post("/api/classtypes") {
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(form)
         }.andExpect {
@@ -80,7 +63,7 @@ class ClassTypeApiTestMockWebLayer(@Autowired val mockMvc: MockMvc, @Autowired v
             jsonPath("\$.name") { value(form.name) }
         }
 
-        mockMvc.get("/api/classes/types/${form.code}")
+        mockMvc.get("/api/classtypes/${form.code}")
             .andExpect { status { isOk() } }
             .andExpect {
                 jsonPath("\$.code") { value(form.code) }
@@ -92,7 +75,7 @@ class ClassTypeApiTestMockWebLayer(@Autowired val mockMvc: MockMvc, @Autowired v
     @ValueSource(strings = ["BADCHAR!", "SPA CE", "DAS-H", "lower"])
     fun `Add class type with invalid code returns bad request`() {
         val form = ClassTypeForm("INVALID!", "New type")
-        mockMvc.post("/api/classes/types") {
+        mockMvc.post("/api/classtypes") {
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(form)
         }.andExpect {

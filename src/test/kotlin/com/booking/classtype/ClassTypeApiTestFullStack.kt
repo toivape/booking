@@ -1,4 +1,4 @@
-package com.booking.admin
+package com.booking.classtype
 
 import com.booking.PostgreExtension
 import org.junit.jupiter.api.Test
@@ -26,7 +26,7 @@ class ClassTypeApiTestFullStack(@Autowired val webClient: WebTestClient) {
     )
     @Test
     fun `List all class types`() {
-        webClient.get().uri("/api/classes/types")
+        webClient.get().uri("/api/classtypes")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -36,7 +36,7 @@ class ClassTypeApiTestFullStack(@Autowired val webClient: WebTestClient) {
     @Sql(statements = ["INSERT INTO class_type (code, name) VALUES ('MATTI','Matti')"])
     @Test
     fun `Get class type by Id`() {
-        webClient.get().uri("/api/classes/types/MATTI")
+        webClient.get().uri("/api/classtypes/MATTI")
             .exchange()
             .expectStatus().isOk
             .expectBody()
@@ -45,7 +45,7 @@ class ClassTypeApiTestFullStack(@Autowired val webClient: WebTestClient) {
 
     @Test
     fun `Class type is not found`() {
-        webClient.get().uri("/api/classes/types/TEPPO")
+        webClient.get().uri("/api/classtypes/TEPPO")
             .exchange()
             .expectStatus().isNotFound
             .expectBody()
@@ -55,7 +55,7 @@ class ClassTypeApiTestFullStack(@Autowired val webClient: WebTestClient) {
     @Test
     fun `Add class type`() {
         val body = ClassTypeForm("CODE_7", "Koodi 7")
-        webClient.post().uri("/api/classes/types")
+        webClient.post().uri("/api/classtypes")
             .bodyValue(body)
             .exchange()
             .expectStatus().isCreated
@@ -67,7 +67,7 @@ class ClassTypeApiTestFullStack(@Autowired val webClient: WebTestClient) {
     @Sql(statements = ["INSERT INTO class_type (code, name) VALUES ('DELETE_ME','Delete me')"])
     @Test
     fun `Delete class type`() {
-        webClient.delete().uri("/api/classes/types/DELETE_ME")
+        webClient.delete().uri("/api/classtypes/DELETE_ME")
             .exchange()
             .expectStatus().isOk
     }

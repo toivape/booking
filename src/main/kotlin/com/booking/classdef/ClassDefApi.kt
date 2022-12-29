@@ -1,9 +1,11 @@
-package com.booking.admin
+package com.booking.classdef
 
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,22 +16,26 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/api/classes")
-class ClassDefApi(val classService: ClassService) {
+@RequestMapping("/api/classdefs")
+@Validated // Required to validate path variables
+class ClassDefApi(val classDefService: ClassDefService) {
 
-    @GetMapping("/definitions")
-    fun listClassDefinitions() = classService.listClassDefinitions()
+    @GetMapping
+    fun listClassDefinitions() = classDefService.listClassDefinitions()
 
-    @GetMapping("/definitions/{id}")
-    fun getClassDefinition(@PathVariable id: Int) = classService.getClassDefinition(id)
+    @GetMapping("{id}")
+    fun getClassDefinition(
+        @PathVariable @Min(0)
+        id: Int
+    ) = classDefService.getClassDefinition(id)
 
-    @PostMapping("/definitions")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun addClassDefinition(
         @Valid // Is required to validate RequestBody even if class level has @Validated
         @RequestBody
         form: ClassDefinitionForm
-    ) = classService.saveClassDefinition(form)
+    ) = classDefService.saveClassDefinition(form)
 }
 
 data class ClassDefinitionForm(
