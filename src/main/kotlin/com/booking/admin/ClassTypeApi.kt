@@ -26,8 +26,8 @@ class ClassApi(val classService: ClassService) {
     fun addClassType(
         @Valid // Is required to validate RequestBody even if class level has @Validated
         @RequestBody
-        classTypeForm: ClassTypeForm
-    ) = classService.saveClassType(classTypeForm.code, classTypeForm.name)
+        form: ClassTypeForm
+    ) = classService.saveClassType(form.code, form.name)
 
     @DeleteMapping("/types/{code}")
     fun deleteClassType(
@@ -60,6 +60,6 @@ data class ClassTypeForm(
     val name: String
 ) {
     companion object {
-        const val CODE_PATTERN = "^[A-Za-z0-9_]+"
+        const val CODE_PATTERN = "^[A-Z0-9_]+"
     }
 }

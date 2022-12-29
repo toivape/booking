@@ -14,12 +14,12 @@ import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
 /**
- * Configure test container as companion object.
+ * Configure test container as companion object in the test class.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-class ClassApiIntegrationTestFirstAttempt(@Autowired val mockMvc: MockMvc) {
+class ClassTypeApiContainerTestMk1(@Autowired val mockMvc: MockMvc) {
 
     companion object {
         @Container

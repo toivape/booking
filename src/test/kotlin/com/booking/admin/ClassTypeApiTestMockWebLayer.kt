@@ -1,15 +1,20 @@
 package com.booking.admin
 
 import com.booking.PostgreExtension
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
 
 /**
  * Test DB and Service layers through Mock Http layer.
@@ -20,7 +25,7 @@ import org.springframework.test.web.servlet.get
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(PostgreExtension::class)
-class ClassApiIntegrationTestImproved(@Autowired val mockMvc: MockMvc, @Autowired val classTypeRepo: ClassTypeRepo, @Autowired val classDefinitionRepo: ClassDefinitionRepo) {
+class ClassTypeApiTestMockWebLayer(@Autowired val mockMvc: MockMvc, @Autowired val mapper: ObjectMapper, @Autowired val classTypeRepo: ClassTypeRepo, @Autowired val classDefinitionRepo: ClassDefinitionRepo) {
 
     @AfterEach
     fun cleanAfterEach() {
@@ -53,12 +58,46 @@ class ClassApiIntegrationTestImproved(@Autowired val mockMvc: MockMvc, @Autowire
         ]
     )
     @Test
-    fun `Find class definitions`() {
+    fun `List class definitions`() {
         mockMvc.get("/api/classes/definitions")
             .andExpect { status { isOk() } }
             .andExpect {
                 jsonPath("\$.[0].id") { value(1) }
                 jsonPath("\$.[0].name") { value("Astanga mysore") }
             }
+    }
+
+    @Test
+    fun `New class type is added to DB`() {
+        val form = ClassTypeForm("NEW", "New type")
+
+        mockMvc.post("/api/classes/types") {
+            contentType = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(form)
+        }.andExpect {
+            status { isCreated() }
+            jsonPath("\$.code") { value(form.code) }
+            jsonPath("\$.name") { value(form.name) }
+        }
+
+        mockMvc.get("/api/classes/types/${form.code}")
+            .andExpect { status { isOk() } }
+            .andExpect {
+                jsonPath("\$.code") { value(form.code) }
+                jsonPath("\$.name") { value(form.name) }
+            }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["BADCHAR!", "SPA CE", "DAS-H", "lower"])
+    fun `Add class type with invalid code returns bad request`() {
+        val form = ClassTypeForm("INVALID!", "New type")
+        mockMvc.post("/api/classes/types") {
+            contentType = MediaType.APPLICATION_JSON
+            content = mapper.writeValueAsString(form)
+        }.andExpect {
+            status { isBadRequest() }
+            jsonPath("\$.code") { value("must match \"${ClassTypeForm.CODE_PATTERN}\"") }
+        }
     }
 }

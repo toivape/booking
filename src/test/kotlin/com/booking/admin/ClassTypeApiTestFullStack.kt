@@ -16,7 +16,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(PostgreExtension::class)
 @AutoConfigureWebTestClient // This annotation and Webflux import required for WebTestClient to work: implementation("org.springframework.boot:spring-boot-starter-webflux")
-class ClassApiTestFullStack(@Autowired val webClient: WebTestClient) {
+class ClassTypeApiTestFullStack(@Autowired val webClient: WebTestClient) {
 
     @Sql(
         statements = [
@@ -41,15 +41,6 @@ class ClassApiTestFullStack(@Autowired val webClient: WebTestClient) {
             .expectStatus().isOk
             .expectBody()
             .jsonPath("\$.code").isEqualTo("MATTI")
-    }
-
-    @Test
-    fun `Getting class type using invalid code format returns error`() {
-        webClient.get().uri("/api/classes/types/MATTI!")
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody()
-            .jsonPath("\$[0]").isEqualTo("getClassType.code - must match \"${ClassTypeForm.CODE_PATTERN}\"")
     }
 
     @Test
@@ -79,48 +70,5 @@ class ClassApiTestFullStack(@Autowired val webClient: WebTestClient) {
         webClient.delete().uri("/api/classes/types/DELETE_ME")
             .exchange()
             .expectStatus().isOk
-    }
-
-    @Test
-    fun `Delete class type with invalid code format returns error`() {
-        webClient.delete().uri("/api/classes/types/DELETE_ME!")
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody()
-            .jsonPath("\$[0]").isEqualTo("deleteClassType.code - must match \"${ClassTypeForm.CODE_PATTERN}\"")
-    }
-
-    @Test
-    fun `Saving invalid class type returns errors`() {
-        val body = ClassTypeForm("123456789012345678901234567890X", "  ")
-        webClient.post().uri("/api/classes/types")
-            .bodyValue(body)
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody()
-            .jsonPath("\$.code").isEqualTo("size must be between 1 and 30")
-            .jsonPath("\$.name").isEqualTo("must not be blank")
-    }
-
-    @Test
-    fun `Adding class type with invalid code returns error`() {
-        val body = ClassTypeForm("BAD_12!", "Valid name")
-        webClient.post().uri("/api/classes/types")
-            .bodyValue(body)
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody()
-            .jsonPath("\$.code").isEqualTo("must match \"${ClassTypeForm.CODE_PATTERN}\"")
-    }
-
-    @Test
-    fun `Class code does not allow spaces`() {
-        val body = ClassTypeForm("BAD 12", "Valid name")
-        webClient.post().uri("/api/classes/types")
-            .bodyValue(body)
-            .exchange()
-            .expectStatus().isBadRequest
-            .expectBody()
-            .jsonPath("\$.code").isEqualTo("must match \"${ClassTypeForm.CODE_PATTERN}\"")
     }
 }

@@ -26,4 +26,12 @@ class ClassService(val classTypeRepo: ClassTypeRepo, val classDefinitionRepo: Cl
     fun getClassType(code: String): ClassType = classTypeRepo.findByIdOrNull(code) ?: throw NotFoundException()
 
     fun listClassDefinitions() = classDefinitionRepo.findByOrderByNameAsc()
+
+    fun getClassDefinition(id: Int): ClassDefinition {
+        return classDefinitionRepo.findByIdOrNull(id) ?: throw NotFoundException()
+    }
+
+    fun saveClassDefinition(form: ClassDefinitionForm): ClassDefinition {
+        TODO("NOT IMPLEMENTED")
+    }
 }
