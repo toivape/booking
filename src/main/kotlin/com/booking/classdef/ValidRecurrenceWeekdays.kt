@@ -10,14 +10,14 @@ import kotlin.reflect.KClass
 @Constraint(validatedBy = [RecurrenceDayValidator::class])
 @Target(AnnotationTarget.FIELD)
 // @Retention(RetentionPolicy.RUNTIME)
-annotation class RecurrenceDays(
+annotation class ValidRecurrenceWeekdays(
     // val message: String = "{javax.validation.constraints.NotBlank.message}",
     val message: String = "Invalid recurrence days",
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Payload>> = []
 )
 
-class RecurrenceDayValidator : ConstraintValidator<RecurrenceDays, Array<DayNameEnum>> {
+class RecurrenceDayValidator : ConstraintValidator<ValidRecurrenceWeekdays, Array<DayNameEnum>> {
 
     override fun isValid(value: Array<DayNameEnum>?, context: ConstraintValidatorContext?): Boolean {
         if (value == null) return true

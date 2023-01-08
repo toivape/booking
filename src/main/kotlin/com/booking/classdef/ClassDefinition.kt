@@ -16,21 +16,22 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "class_definition")
 class ClassDefinition(
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int,
+    val id: Int?,
 
     @Version
-    val version: Int,
+    val version: Int?,
 
-    @Column(name = "name", length = 300, nullable = false)
+    @Column(name = "name", length = NAME_MAX_LEN, nullable = false)
     val name: String,
 
     @ManyToOne
     @JoinColumn(name = "class_type_code", nullable = false)
     val classType: ClassType,
 
-    @Column(name = "location", length = 500)
+    @Column(name = "location", length = LOCATION_MAX_LEN)
     val location: String?,
 
     @Column(name = "price_credits")
@@ -39,7 +40,7 @@ class ClassDefinition(
     @Column(name = "max_people")
     val maxPeople: Int?,
 
-    @Column(name = "description", length = 3000)
+    @Column(name = "description", length = DESC_MAX_LEN)
     val description: String?,
 
     @Column(name = "recurrence_days", columnDefinition = "varchar(3)[]")
@@ -62,4 +63,10 @@ class ClassDefinition(
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     val updatedAt: LocalDateTime
-)
+){
+    companion object {
+        const val NAME_MAX_LEN = 300
+        const val LOCATION_MAX_LEN = 500
+        const val DESC_MAX_LEN = 3000
+    }
+}

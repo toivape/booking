@@ -1,11 +1,14 @@
 package com.booking.classdef
 
+import com.booking.classtype.ValidClassTypeCode
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,13 +24,19 @@ import java.time.LocalDate
 class ClassDefApi(val classDefService: ClassDefService) {
 
     @GetMapping
-    fun listClassDefinitions() = classDefService.listClassDefinitions()
+    fun listClassDefinitions() = classDefService.listClassDefs()
 
     @GetMapping("{id}")
     fun getClassDefinition(
         @PathVariable @Min(0)
         id: Int
-    ) = classDefService.getClassDefinition(id)
+    ) = classDefService.getClassDef(id)
+
+    @DeleteMapping("{id}")
+    fun deleteClassDefinition(
+        @PathVariable @Min(0)
+        id: Int
+    ) = classDefService.deleteClassDef(id)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -35,43 +44,47 @@ class ClassDefApi(val classDefService: ClassDefService) {
         @Valid // Is required to validate RequestBody even if class level has @Validated
         @RequestBody
         form: ClassDefinitionForm
-    ) = classDefService.saveClassDefinition(form)
+    ) = classDefService.saveClassDef(form)
 }
 
+@ValidRecurrenceTime
 data class ClassDefinitionForm(
     val id: Int? = null,
     val version: Int? = null,
 
     @field:NotBlank
+    @field:Size(min = 1, max = ClassDefinition.NAME_MAX_LEN)
     var name: String,
 
-    @field:NotBlank
+    @field:ValidClassTypeCode
     var classTypeCode: String,
 
-    var location: String?,
+    @field:Size(min = 1, max = ClassDefinition.LOCATION_MAX_LEN)
+    var location: String? = null,
 
-    var priceCredits: Int?,
+    var priceCredits: Int? = null,
 
-    var maxPeople: Int?,
+    var maxPeople: Int? = null,
 
-    var description: String?,
+    @field:Size(min = 1, max = ClassDefinition.DESC_MAX_LEN)
+    var description: String? = null,
 
     @Suppress("ArrayInDataClass")
-    @field:RecurrenceDays
-    var recurrenceDays: Array<DayNameEnum>?,
+    @field:ValidRecurrenceWeekdays
+    var validRecurrenceWeekdays: Array<DayNameEnum>? = null,
 
     // start date must be before end date if both are given
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    var recurrenceStartDate: LocalDate?,
+    var recurrenceStartDate: LocalDate? = null,
 
     @field:DateTimeFormat(pattern = "yyyy-MM-dd")
-    var recurrenceEndDate: LocalDate?,
+    var recurrenceEndDate: LocalDate? = null,
 
     @field:DateTimeFormat(pattern = "HH:mm")
-    var startTime: String?,
+    var startTime: String? = null,
 
     @field:DateTimeFormat(pattern = "HH:mm")
-    var endTime: String?
+    var endTime: String? = null
 
 )
 

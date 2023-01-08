@@ -6,18 +6,7 @@ build/
 !**/src/test/**/build/
 .DS_Store
 pgdata/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+TODO.md
 
 ### IntelliJ IDEA ###
 .idea
@@ -27,13 +16,6 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
 
 ### VS Code ###
 .vscode/

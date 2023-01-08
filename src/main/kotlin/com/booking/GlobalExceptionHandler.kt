@@ -18,7 +18,6 @@ data class ExceptionResult(val errorMessage: String, val url: String)
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 class NotFoundException : RuntimeException("Requested data not found with id")
 
-
 @RestControllerAdvice
 class GlobalExceptionHandler {
     /**
@@ -43,10 +42,14 @@ class GlobalExceptionHandler {
     fun handleRequestBodyExceptions(
         ex: MethodArgumentNotValidException
     ): Map<String, String?>? {
+        logger.warn("Validation failed: ${ex.message}")
         // FIXME: If field has multiple errors, only the last one will be shown
-        logger.warn("Validation failed failed: ${ex.message}")
+        // allErrors returns both field and class level validation errors
         return ex.bindingResult.allErrors.associate {
-            val fieldName = (it as FieldError).field
+            val fieldName = when (it) {
+                is FieldError -> (it as FieldError).field
+                else -> it.objectName
+            }
             fieldName to it.defaultMessage
         }
     }
@@ -66,5 +69,4 @@ class GlobalExceptionHandler {
             "${it.propertyPath} - ${it.message}"
         }
     }
-
 }
