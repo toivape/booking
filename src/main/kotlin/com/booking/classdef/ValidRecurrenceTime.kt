@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 import jakarta.validation.Payload
 import java.time.LocalDate
+import java.time.LocalDate.EPOCH
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -19,36 +20,45 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 annotation class ValidRecurrenceTime(
-    val message: String = "Recurrence start date and time must be before end date",
+    val message: String = "Recurrence start date must be before end date and start time must be before end time",
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Payload>> = []
 )
 
 class RecurrenceTimeValidator : ConstraintValidator<ValidRecurrenceTime, ClassDefinitionForm> {
 
-    override fun isValid(form: ClassDefinitionForm?, context: ConstraintValidatorContext?): Boolean {
-        // Ignore check if form or dates are null
+    override fun isValid(value: ClassDefinitionForm?, context: ConstraintValidatorContext?): Boolean {
         // Leave null-checking to @NotNull on individual parameters
-        if (form?.recurrenceStartDate == null || form.recurrenceEndDate == null){
+        if (value == null) {
             return true
         }
 
-        // No times set -> Validate only dates
-        if (form.startTime.isNullOrBlank() || form.endTime.isNullOrBlank()) {
-            return form.recurrenceStartDate!!.isBefore(form.recurrenceEndDate)
+        val datesAreValid = if (datesArePresent(value)) {
+            value.recurrenceStartDate!!.isBefore(value.recurrenceEndDate)
+        } else {
+            true
         }
 
-        // Validate dates with time
-        val start = form.recurrenceStartDate!!.withTime(form.startTime!!)
-        val end = form.recurrenceEndDate!!.withTime(form.endTime!!)
-        return start.isBefore(end)
+        val timesAreValid = if (timesArePresent(value)) {
+            val start = value.startTime!!.withDate(EPOCH)
+            val end = value.endTime!!.withDate(EPOCH)
+            start.isBefore(end)
+        } else {
+            true
+        }
+
+        return datesAreValid && timesAreValid
     }
 
+    private fun datesArePresent(value: ClassDefinitionForm) =
+        value.recurrenceStartDate != null && value.recurrenceEndDate != null
 
+    private fun timesArePresent(value: ClassDefinitionForm) =
+        value.startTime?.isNotBlank() == true && value.endTime?.isNotBlank() == true
 }
 
-fun LocalDate.withTime(timeString: String): LocalDateTime {
+fun String.withDate(dt: LocalDate): LocalDateTime {
     val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
-    val time = LocalTime.parse(timeString, timeFormat)!!
-    return LocalDateTime.of(this, time)
+    val time = LocalTime.parse(this, timeFormat)!!
+    return LocalDateTime.of(dt, time)
 }

@@ -83,7 +83,7 @@ class ClassDefTest(@Autowired val mockMvc: MockMvc, @Autowired val mapper: Objec
             content = mapper.writeValueAsString(form)
         }.andExpect {
             status { isBadRequest() }
-            jsonPath("\$.classDefinitionForm") { value("Recurrence start date and time must be before end date") }
+            jsonPath("\$.classDefinitionForm") { value("Recurrence start date must be before end date and start time must be before end time") }
         }
     }
 
@@ -97,6 +97,7 @@ class ClassDefTest(@Autowired val mockMvc: MockMvc, @Autowired val mapper: Objec
         }.andExpect {
             status { isBadRequest() }
             jsonPath("\$.classTypeCode") { value("Unknown class type \"NO_EXIST\"") }
+            // TODO You could let this just to throw DB constraint exception when code does not exist... Not very user friendly though and it leaks out used db.
         }
     }
 

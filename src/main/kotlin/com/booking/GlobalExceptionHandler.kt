@@ -43,8 +43,8 @@ class GlobalExceptionHandler {
         ex: MethodArgumentNotValidException
     ): Map<String, String?>? {
         logger.warn("Validation failed: ${ex.message}")
-        // FIXME: If field has multiple errors, only the last one will be shown
-        // allErrors returns both field and class level validation errors
+        // FEATURE: If field has multiple errors, only the last one will be shown
+        // .allErrors returns both field and class level validation errors
         return ex.bindingResult.allErrors.associate {
             val fieldName = when (it) {
                 is FieldError -> (it as FieldError).field
