@@ -73,8 +73,8 @@ class ClassTypeApiTestMockWebLayer(@Autowired val mockMvc: MockMvc, @Autowired v
 
     @ParameterizedTest
     @ValueSource(strings = ["BADCHAR!", "SPA CE", "DAS-H", "lower"])
-    fun `Add class type with invalid code returns bad request`() {
-        val form = ClassTypeForm("INVALID!", "New type")
+    fun `Add class type with invalid code returns bad request`(code: String) {
+        val form = ClassTypeForm(code, "New type")
         mockMvc.post("/api/classtypes") {
             contentType = MediaType.APPLICATION_JSON
             content = mapper.writeValueAsString(form)

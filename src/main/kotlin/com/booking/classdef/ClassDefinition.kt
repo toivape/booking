@@ -44,7 +44,7 @@ class ClassDefinition(
     val description: String?,
 
     @Column(name = "recurrence_days", columnDefinition = "varchar(3)[]")
-    val recurrenceDays: Array<String>?,
+    val recurrenceWeekDays: Array<String>?,
 
     @Column(name = "recurrence_start_date", columnDefinition = "DATE")
     val recurrenceStartDate: LocalDate?,
@@ -59,12 +59,31 @@ class ClassDefinition(
     val endTime: String?,
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
-    val createdAt: LocalDateTime,
+    val createdAt: LocalDateTime?,
 
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
-    val updatedAt: LocalDateTime
-){
+    val updatedAt: LocalDateTime?
+) {
     companion object {
+        fun fromForm(f: ClassDefinitionForm, classType: ClassType, now: LocalDateTime = LocalDateTime.now()) =
+            ClassDefinition(
+                id = f.id,
+                version = f.version,
+                name = f.name,
+                classType = classType,
+                location = f.location,
+                priceCredits = f.priceCredits,
+                maxPeople = f.maxPeople,
+                description = f.description,
+                recurrenceWeekDays = f.recurrenceWeekDays?.toStringArray(),
+                recurrenceStartDate = f.recurrenceStartDate,
+                recurrenceEndDate = f.recurrenceEndDate,
+                startTime = f.startTime,
+                endTime = f.endTime,
+                createdAt = now,
+                updatedAt = now
+            )
+
         const val NAME_MAX_LEN = 300
         const val LOCATION_MAX_LEN = 500
         const val DESC_MAX_LEN = 3000

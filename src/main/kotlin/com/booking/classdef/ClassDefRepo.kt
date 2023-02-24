@@ -14,6 +14,8 @@ class ClassDefListItem(
 interface ClassDefRepo : CrudRepository<ClassDefinition, Int> {
     fun findByOrderByNameAsc(): List<ClassDefinition>
 
+    fun findByIdAndVersion(id: Int, version: Int): ClassDefinition?
+
     @Query("SELECT new com.booking.classdef.ClassDefListItem(id, name, priceCredits, classType) FROM ClassDefinition ORDER BY name ASC")
     fun listClassDefs(): List<ClassDefListItem>
 }

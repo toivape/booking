@@ -1,5 +1,6 @@
 package com.booking.classtype
 
+import arrow.core.getOrHandle
 import com.booking.classtype.ClassTypeForm.Companion.CODE_PATTERN
 import jakarta.persistence.*
 import jakarta.validation.Valid
@@ -43,9 +44,9 @@ class ClassApi(val classTypeService: ClassTypeService) {
         @Size(max = 30)
         @Pattern(regexp = CODE_PATTERN)
         code: String
-    ): ClassType {
-        logger.info { "Get class type with code $code or throw not found" }
-        return classTypeService.getClassType(code)
+    ) = classTypeService.getClassType(code).getOrHandle {
+        logger.info { "Failed to get ClassType with code $code: ${it.message}" }
+        throw it
     }
 }
 
